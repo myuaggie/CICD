@@ -1,4 +1,3 @@
-# CICD
 
 
 ![image](http://www.ruanyifeng.com/blogimg/asset/2017/bg2017121901.png)
@@ -213,10 +212,79 @@ you can open the website as follows:
 $ heroku open
 ```
 
-#### View logs
+#### logs
+
+##### Types of logs
+- App logs 
+- System logs 
+- API logs 
+- Add-on logs 
+
+##### Writing to your log
+
+In Ruby, you could use something like:
+
+```
+puts "Hello, logs!"
+```
+
+In Java:
+
+```
+System.err.println("Hello, logs!");
+System.out.println("Hello, logs!");
+```
+The same holds true for all other languages supported by Heroku.
+
+##### View logs
+
+
+```
+$ heroku logs
+2010-09-16T15:13:46.677020+00:00 app[web.1]: Processing PostController#list (for 208.39.138.12 at 2010-09-16 15:13:46) [GET]
+2010-09-16T15:13:46.677023+00:00 app[web.1]: Rendering template within layouts/application
+2010-09-16T15:13:46.677902+00:00 app[web.1]: Rendering post/list
+2010-09-16T15:13:46.678990+00:00 app[web.1]: Rendered includes/_header (0.1ms)
+2010-09-16T15:13:46.698234+00:00 app[web.1]: Completed in 74ms (View: 31, DB: 40) | 200 OK [http://myapp.heroku.com/]
+2010-09-16T15:13:46.723498+00:00 heroku[router]: at=info method=GET path="/posts" host=myapp.herokuapp.com" fwd="204.204.204.204" dyno=web.1 connect=1ms service=18ms status=200 bytes=975
+2010-09-16T15:13:47.893472+00:00 app[worker.1]: 2 jobs processed at 16.6761 j/s, 0 failed ...
+```
+The `logs` command retrieves 100 log lines by default. You can specify the number of log lines to retrieve (up to a maximum of 1,500 lines) by using the `--num` (or `-n`) option.
+
+```
+$ heroku logs -n 200
+```
+##### Real-time tail
 View information about your running app using one of the logging commands, `heroku logs --tail`:
+##### Filtering
+If you only want to fetch logs with a certain source, a certain dyno, or both, you can use the `--source` (or `-s`) and `--dyno` (or `-d`) filtering arguments:
+
+```
+$ heroku logs --dyno router
+2012-02-07T09:43:06.123456+00:00 heroku[router]: at=info method=GET path="/stylesheets/dev-center/library.css" host=devcenter.heroku.com fwd="204.204.204.204" dyno=web.5 connect=1ms service=18ms status=200 bytes=13
+2012-02-07T09:43:06.123456+00:00 heroku[router]: at=info method=GET path="/articles/bundler" host=devcenter.heroku.com fwd="204.204.204.204" dyno=web.6 connect=1ms service=18ms status=200 bytes=20375
+
+$ heroku logs --source app
+2012-02-07T09:45:47.123456+00:00 app[web.1]: Rendered shared/_search.html.erb (1.0ms)
+2012-02-07T09:45:47.123456+00:00 app[web.1]: Completed 200 OK in 83ms (Views: 48.7ms | ActiveRecord: 32.2ms)
+2012-02-07T09:45:47.123456+00:00 app[worker.1]: [Worker(host:465cf64e-61c8-46d3-b480-362bfd4ecff9 pid:1)] 1 jobs processed at 23.0330 j/s, 0 failed ...
+2012-02-07T09:46:01.123456+00:00 app[web.6]: Started GET "/articles/buildpacks" for 4.1.81.209 at 2012-02-07 09:46:01 +0000
+
+$ heroku logs --source app --dyno worker
+2012-02-07T09:47:59.123456+00:00 app[worker.1]: [Worker(host:260cf64e-61c8-46d3-b480-362bfd4ecff9 pid:1)] Article#record_view_without_delay completed after 0.0221
+2012-02-07T09:47:59.123456+00:00 app[worker.1]: [Worker(host:260cf64e-61c8-46d3-b480-362bfd4ecff9 pid:1)] 5 jobs processed at 31.6842 j/s, 0 failed ...
+```
+You can also combine the filtering switches with `--tail` to get a real-time stream of filtered output.
+
+
+```
+$ heroku logs --source app --tail
+```
 
 Press `Ctrl+C` to stop streaming the logs.
+
+
+
 
 #### Define a Procfile
 
